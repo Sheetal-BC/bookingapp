@@ -21,6 +21,7 @@
           <button class="btn">Get a call</button>
     </form> 
     <ul id = 'listOfUsers' class="listuser"></ul>  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0-alpha.1/axios.min.js"></script>
     <script>
         function saveToLocalStorage(event) {
            event.preventDefault();
@@ -37,7 +38,17 @@
                calldate,
                calltime
            }
-           localStorage.setItem(obj.email, JSON.stringify(obj))
+           axios.post("https://crudcrud.com/api/48c0941a794341a38577988aced230ae/AppointmentsData",obj)
+           .then((response) => {
+            showNewUserOnScreen(response.data)
+                 console.log(response);
+           })
+           .catch((err) =>{
+            document.body.innerHTML = document.body.innerHTML + "<h4>Somthing went wrong</h4>";
+            console.log(err);
+         
+           })
+           //localStorage.setItem(obj.email, JSON.stringify(obj))
            showNewUserOnScreen(obj)
        }
 
@@ -62,7 +73,7 @@
 
 
            const parentNode = document.getElementById('listOfUsers');
-           const childHTML = `<li id=${user.email}> ${user.name} - ${user.email}
+           const childHTML = `<li id=${user.email}> ${user.name} - ${user.email} - ${user.phonenumber} - ${user.calldate} - ${user.calltime}
                                    <button class='deletbutton' onclick=deleteUser('${user.email}')> Delete User </button>
                                    <button class='editbutton' onclick=editUserDetails('${user.email}','${user.name}','${user.phonenumber}','${user.calldate}','${user.calltime}')>Edit User </button>
                                 </li>`
