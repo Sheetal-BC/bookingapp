@@ -30,7 +30,6 @@
            const phonenumber = event.target.phonenumber.value;
            const calldate = event.target.calldate.value;
            const calltime = event.target.calltime.value;
-
            const obj = {
                name,
                email,
@@ -38,7 +37,7 @@
                calldate,
                calltime
            }
-           axios.post("https://crudcrud.com/api/48c0941a794341a38577988aced230ae/AppointmentsData",obj)
+           axios.post("https://crudcrud.com/api/0adba26103064b90b211e7b095361977/appointment",obj)
            .then((response) => {
             showNewUserOnScreen(response.data)
                  console.log(response);
@@ -49,16 +48,25 @@
          
            })
            //localStorage.setItem(obj.email, JSON.stringify(obj))
-           showNewUserOnScreen(obj)
+        //    showNewUserOnScreen(obj)
        }
 
        window.addEventListener("DOMContentLoaded", () => {
-        axios.get("https://crudcrud.com/api/48c0941a794341a38577988aced230ae/AppointmentsData")
-             .then((response) =>{
-                for( let i=0; i < response.data.length; i++){
-                    showNewUserOnScreen(response.data[i]);
+        //    const localStorageObj = localStorage;
+        //    const localstoragekeys  = Object.keys(localStorageObj)
+
+        //    for(var i =0; i< localstoragekeys.length; i++){
+        //        const key = localstoragekeys[i]
+        //        const userDetailsString = localStorageObj[key];
+        //        const userDetailsObj = JSON.parse(userDetailsString);
+        //        showNewUserOnScreen(userDetailsObj)
+        //    }
+        axios.get("https://crudcrud.com/api/0adba26103064b90b211e7b095361977/appointment")
+             .then((res) =>{
+                for( let i=0; i < res.data.length; i++){
+                    showNewUserOnScreen(res.data[i]);
                 }
- 
+
              })
              .catch((err) =>{
                console.log(err);  
@@ -75,40 +83,37 @@
        })
 
        function showNewUserOnScreen(user){
-           document.getElementById('email').value = '';
+        
+        document.getElementById('email').value = '';
            document.getElementById('username').value = '';
            document.getElementById('phonenumber').value ='';
            document.getElementById('calldate').value ='';
            document.getElementById('calltime').value ='';
 
-
+           if(localStorage.getItem(user.email) !== null){
+            removeUserFromScreen(user.email)
+           }
            const parentNode = document.getElementById('listOfUsers');
            const childHTML = `<li id=${user._id}> ${user.name} - ${user.email} - ${user.phonenumber} - ${user.calldate} - ${user.calltime}
                                    <button class='deletbutton' onclick=deleteUser('${user._id}')> Delete User </button>
-                                   <button class='editbutton' onclick=editUserDetails('${user._id}','${user.name}','${user.phonenumber}','${user.calldate}','${user.calltime}')>Edit User </button>
+                                   <button class='editbutton' onclick=editUserDetails('${user.email}','${user.name}','${user.phonenumber}','${user.calldate}','${user.calltime}','${user._id}')>Edit User </button>
                                 </li>`
-
            parentNode.innerHTML = parentNode.innerHTML + childHTML;
        }
        // Edit user details
-       function editUserDetails(emailId, name, phonenumber,calldate,calltime){
+       function editUserDetails(emailId, name, phonenumber,calldate,calltime, userId){
            document.getElementById('email').value = emailId;
            document.getElementById('username').value = name;
-           document.getElementById('phonenumber').value =phonenumber;
-           document.getElementById('calldate').value = name;
-           document.getElementById('calltime').value =phonenumber;
-
-           deleteUser(emailId);
-
-
+           document.getElementById('phonenumber').value = phonenumber;
+           document.getElementById('calldate').value = calldate
+           document.getElementById('calltime').value = calltime;
+           deleteUser(userId);
        }
-
        // deleteUser('abc@gmail.com')
-
        function deleteUser(userId){
-        axios.delete(`https://crudcrud.com/api/48c0941a794341a38577988aced230ae/AppointmentsData/${userId}`)
-           .then((response) =>{
-            removeUserFromScreen(userId);
+        axios.delete(`https://crudcrud.com/api/0adba26103064b90b211e7b095361977/appointment/${userId}`)
+           .then((res) =>{
+            removeUserFromScreen(userId)
            })
            .catch((err) =>{
             console.log(err);
@@ -116,17 +121,14 @@
         // console.log(emailId)
         //    localStorage.removeItem(emailId);
         //    removeUserFromScreen(emailId);
-
        }
-
        function removeUserFromScreen(userId){
            const parentNode = document.getElementById('listOfUsers');
            const childNodeToBeDeleted = document.getElementById(userId);
-
            parentNode.removeChild(childNodeToBeDeleted)
        }
-
    </script>  
     </div>
 </body>
 </html>
+          
